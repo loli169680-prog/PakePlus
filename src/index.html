@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физическая Топология Серверного Шкафа 19" - OLT BDCOM & Кросс-Панели</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #080b11;
+            color: #e2e8f0;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d111a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #222d3d; 
+            border-radius: 4px;
+            border: 1px solid #101726;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155; 
+        }
+
+        /* Glassmorphism panels */
+        .glass-panel {
+            background: rgba(13, 18, 28, 0.85);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Server Cabinet Rack Frame */
+        .rack-cabinet {
+            background: linear-gradient(180deg, #111622 0%, #0a0d14 100%);
+            border: 3px solid #232b3d;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.8),
+                inset 0 0 40px rgba(0, 0, 0, 0.9),
+                0 0 20px rgba(56, 189, 248, 0.05);
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .rack-rail {
+            background: linear-gradient(90deg, #182030 0%, #222d42 50%, #151c2a 100%);
+            border-right: 1px solid #2e3a52;
+            border-left: 1px solid #2e3a52;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.8);
+        }
+
+        .cage-nut-hole {
+            width: 7px;
+            height: 7px;
+            background-color: #0a0e17;
+            border: 1px solid #3b4861;
+            border-radius: 1px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.9);
+        }
+
+        /* Rack Ears with Screws */
+        .rack-ear {
+            background: linear-gradient(180deg, #242e42 0%, #171f2e 100%);
+            border: 1px solid #3d4c69;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .screw-head {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #94a3b8 0%, #475569 70%, #1e293b 100%);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), 0 1px 2px rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .screw-head::after {
+            content: '+';
+            font-size: 8px;
+            color: #0f172a;
+            font-weight: bold;
+            line-height: 1;
+            transform: translateY(-0.5px);
+        }
+
+        /* Brushed Metal Texture for 19" Front Panels */
+        .unit-panel-bdcom {
+            background: linear-gradient(180deg, #161e2e 0%, #0d1320 100%);
+            border-top: 1px solid #2d3b54;
+            border-bottom: 1px solid #090d15;
+            position: relative;
+        }
+
+        .unit-panel-cross {
+            background: linear-gradient(180deg, #131a29 0%, #0b0f19 100%);
+            border-top: 1px solid #25334a;
+            border-bottom: 1px solid #080b12;
+            position: relative;
+        }
+
+        /* Port socket states */
+        .port-socket {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .port-socket.active {
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.15);
+        }
+        .port-socket:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+        }
+
+        /* LED status lights */
+        .led-green {
+            background-color: #10b981;
+            box-shadow: 0 0 6px #10b981, 0 0 10px rgba(16,185,129,0.5);
+        }
+        .led-amber {
+            background-color: #f59e0b;
+            box-shadow: 0 0 6px #f59e0b, 0 0 10px rgba(245,158,11,0.5);
+        }
+        .led-blue {
+            background-color: #3b82f6;
+            box-shadow: 0 0 6px #3b82f6, 0 0 10px rgba(59,130,246,0.5);
+        }
+        .led-purple {
+            background-color: #a855f7;
+            box-shadow: 0 0 6px #a855f7, 0 0 10px rgba(168,85,247,0.5);
+        }
+        .led-off {
+            background-color: #1f293d;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+        }
+
+        /* SC/APC Optical Fiber Couplers */
+        .sc-coupler-green {
+            background: linear-gradient(180deg, #15803d 0%, #166534 100%);
+            border: 1px solid #22c55e;
+            border-radius: 2px;
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.3);
+        }
+        .sc-coupler-empty {
+            background: #111827;
+            border: 1px dashed #374151;
+            border-radius: 2px;
+        }
+
+        /* SFP Module Optical Slot */
+        .sfp-slot {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid #475569;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-100 selection:bg-sky-500 selection:text-white">
+
+    <!-- Navigation Header Bar -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80 bg-slate-950/90">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col lg:flex-row items-center justify-between gap-4">
+            
+            <div class="flex items-center gap-3.5">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-500/20 to-blue-600/10 border border-sky-500/30 flex items-center justify-center text-sky-400 shadow-lg shadow-sky-500/10">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 012 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-white tracking-wide flex items-center gap-2">
+                        Серверный Шкаф 19" (Rack Cabinet) — OLT BDCOM & Кроссы
+                        <span class="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-sky-950/80 text-sky-400 border border-sky-500/30">RACK-01</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Топология 184 портов кросс-панелей (96P, 48P, 24P, 16P) + 3x OLT BDCOM (48 PON)</p>
+                </div>
+            </div>
+
+            <!-- Server Room Rack Status LCD Widget -->
+            <div class="hidden xl:flex items-center gap-3 px-3.5 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800 text-xs font-mono">
+                <div class="flex items-center gap-1.5 text-emerald-400">
+                    <span class="w-2 h-2 rounded-full led-green animate-pulse"></span>
+                    <span>FAN: OPTIMAL</span>
+                </div>
+                <span class="text-slate-700">|</span>
+                <div class="text-sky-400">
+                    <span>TEMP: 21.4°C</span>
+                </div>
+                <span class="text-slate-700">|</span>
+                <div class="text-amber-400">
+                    <span>PDU: 220V / 2.1A</span>
+                </div>
+            </div>
+
+            <!-- View Switcher & Search Controls -->
+            <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
+                <!-- Mode Selector Tabs -->
+                <div class="flex bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs font-medium shadow-inner">
+                    <button id="btn-rack-view" onclick="switchView('rack')" class="px-3 py-1.5 rounded-lg bg-sky-600 text-white font-semibold shadow-md transition-all flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        Вид Стойки (19" Rack)
+                    </button>
+                    <button id="btn-cords-view" onclick="switchView('cords')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Трассировка Кабелей
+                    </button>
+                    <button id="btn-table-view" onclick="switchView('table')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                        Реестр
+                    </button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="relative flex-1 lg:w-56">
+                    <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+                        <svg class="h-3.5 w-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <input type="text" id="searchInput" oninput="handleSearch()"
+                        class="block w-full pl-8 pr-3 py-1.5 border border-slate-700/80 rounded-xl bg-slate-900/90 text-slate-200 text-xs placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 font-mono transition-all" 
+                        placeholder="Поиск (311, Armix, Hovo)...">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow p-3 sm:p-5 max-w-7xl mx-auto w-full space-y-5">
+
+        <!-- Summary Stats Bar -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="glass-panel p-3.5 rounded-xl border-slate-800/80 flex items-center justify-between shadow-lg">
+                <div>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">OLT PON Порты</p>
+                    <p class="text-xl font-bold text-emerald-400 font-mono mt-0.5">48 / 48 <span class="text-xs text-slate-500 font-normal">(100%)</span></p>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                    <div class="w-3 h-3 rounded-full led-green"></div>
+                </div>
+            </div>
+
+            <div class="glass-panel p-3.5 rounded-xl border-slate-800/80 flex items-center justify-between shadow-lg">
+                <div>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Всего Кросс-Портов</p>
+                    <p class="text-xl font-bold text-white font-mono mt-0.5">184 <span class="text-xs text-slate-500 font-normal">(4 панели)</span></p>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-sky-400 font-mono text-xs font-bold">
+                    19"
+                </div>
+            </div>
+
+            <div class="glass-panel p-3.5 rounded-xl border-slate-800/80 flex items-center justify-between shadow-lg">
+                <div>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Занятые Кроссы</p>
+                    <p class="text-xl font-bold text-sky-400 font-mono mt-0.5" id="stat-occupied">63</p>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 font-mono text-xs font-bold" id="stat-occupied-pct">
+                    34.2%
+                </div>
+            </div>
+
+            <div class="glass-panel p-3.5 rounded-xl border-slate-800/80 flex items-center justify-between shadow-lg">
+                <div>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Свободные Кроссы</p>
+                    <p class="text-xl font-bold text-slate-400 font-mono mt-0.5" id="stat-free">121</p>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-slate-500 font-mono text-xs font-bold" id="stat-free-pct">
+                    65.8%
+                </div>
+            </div>
+        </div>
+
+        <!-- Selected Connection Inspector Drawer / Banner -->
+        <div id="inspector-panel" class="hidden glass-panel p-4 rounded-xl border-sky-500/50 bg-sky-950/20 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
+            <div class="flex items-center gap-3">
+                <div class="w-3.5 h-3.5 rounded-full led-green"></div>
+                <div>
+                    <span class="text-[10px] text-sky-400 font-mono uppercase tracking-widest font-semibold">Инспектор Подключений Стойки</span>
+                    <h3 class="text-sm font-bold text-white mt-0.5" id="inspector-title">Выберите порт в шкафу</h3>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 text-xs font-mono" id="inspector-badge-container">
+                <!-- Badges populated by JS -->
+            </div>
+            <button onclick="closeInspector(true)" class="text-slate-400 hover:text-white p-1 hover:bg-slate-800 rounded-lg transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <!-- VIEW 1: SERVER CABINET RACK VIEW (Default) -->
+        <section id="view-rack" class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
+                <div>
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        19" Серверный Шкаф (42U Server Rack Cabinet)
+                    </h2>
+                    <p class="text-xs text-slate-400">Реалистичная компоновка оборудования по юнитам (1U - 16U). Кликните по любому порту OLT или Кросса.</p>
+                </div>
+                <div class="flex items-center gap-3 text-xs font-mono bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block shadow-sm"></span> PON Порт</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block shadow-sm"></span> Спец. Линк</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-700 inline-block"></span> Свободен</span>
+                </div>
+            </div>
+
+            <!-- Server Rack Outer Frame Enclosure -->
+            <div class="rack-cabinet p-2 sm:p-4 rounded-2xl overflow-x-auto">
+                
+                <!-- Rack Top Header Ventilation & Digital Display -->
+                <div class="mb-3 px-4 py-2 bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 rounded-xl border border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
+                    <div class="flex items-center gap-3">
+                        <span class="text-sky-400 font-bold">CABINET-01 (19" 42U)</span>
+                        <span class="hidden sm:inline-block text-slate-600">|</span>
+                        <span class="hidden sm:inline-block">BDCOM GP3600-16B x3</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full led-green"></span>
+                            <span class="text-[11px]">POWER: OK</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full led-blue"></span>
+                            <span class="text-[11px]">SYS: ONLINE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main 19" Rack Rails & Mounted Units Container -->
+                <div class="flex border-2 border-slate-800/80 rounded-xl overflow-hidden bg-slate-950/90 shadow-2xl min-w-[768px]">
+                    
+                    <!-- Left Rack Mounting Rail with Cage Nut Holes & RU Markers -->
+                    <div class="rack-rail w-8 sm:w-10 flex-shrink-0 flex flex-col justify-between py-2 items-center text-[10px] font-mono text-slate-500 select-none">
+                        <!-- Standard RU Rail Holes -->
+                        <div class="space-y-6 flex flex-col items-center w-full" id="left-rail-holes">
+                            <!-- Populated dynamically / repetitive cage nut holes -->
+                        </div>
+                    </div>
+
+                    <!-- Middle Mounted 19" Equipment Stack -->
+                    <div class="flex-grow space-y-2 p-1 bg-slate-950/80" id="rack-units-stack">
+                        <!-- Dynamic 19" Units Rendered Here -->
+                    </div>
+
+                    <!-- Right Rack Mounting Rail -->
+                    <div class="rack-rail w-8 sm:w-10 flex-shrink-0 flex flex-col justify-between py-2 items-center text-[10px] font-mono text-slate-500 select-none">
+                        <div class="space-y-6 flex flex-col items-center w-full" id="right-rail-holes">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Rack Bottom Air Intake Grille -->
+                <div class="mt-3 px-4 py-1.5 bg-slate-900/80 rounded-xl border border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-500">
+                    <span>BOTTOM AIR INTAKE GRILLE</span>
+                    <span>19-INCH RACK STANDARD (IEC 60297)</span>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- VIEW 2: OPTICAL PATCH CORDS INTERACTIVE WIRING MAP -->
+        <section id="view-cords" class="hidden space-y-4">
+            <div class="glass-panel p-4 rounded-xl border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-slate-950/80">
+                <div>
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        Интерактивная Трассировка Оптических Патч-Кордов
+                    </h2>
+                    <p class="text-xs text-slate-400">Наведите или кликните по узлу для прослеживания пути волокна от Кросс-панели до OLT</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
+                    <span class="text-slate-400 mr-1">Фильтр OLT:</span>
+                    <button onclick="filterCords('all')" class="cord-filter-btn active px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-white" data-filter="all">Все</button>
+                    <button onclick="filterCords(1)" class="cord-filter-btn px-2.5 py-1 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-emerald-400" data-filter="1">OLT 1 (VLAN 2xx)</button>
+                    <button onclick="filterCords(2)" class="cord-filter-btn px-2.5 py-1 rounded-lg bg-blue-950/80 border border-blue-500/40 text-blue-400" data-filter="2">OLT 2 (VLAN 3xx)</button>
+                    <button onclick="filterCords(3)" class="cord-filter-btn px-2.5 py-1 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-400" data-filter="3">OLT 3 (VLAN 4xx)</button>
+                </div>
+            </div>
+
+            <!-- Wiring Canvas Container -->
+            <div id="cords-canvas-wrapper" class="glass-panel rounded-xl p-4 border border-slate-800 bg-slate-950 relative overflow-hidden min-h-[720px] flex justify-between gap-8">
+                <!-- SVG Cable Layer overlay -->
+                <svg id="cords-svg-layer" class="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"></svg>
+
+                <!-- Left Column: Optical Cross-Panels Rack -->
+                <div class="w-1/2 max-w-[48%] space-y-4 z-20" id="cords-left-rack">
+                    <!-- Dynamic Cross sockets for wiring view -->
+                </div>
+
+                <!-- Right Column: OLT Terminals Chassis Rack -->
+                <div class="w-1/2 max-w-[48%] space-y-4 z-20" id="cords-right-rack">
+                    <!-- Dynamic OLT sockets for wiring view -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: SUMMARY TABLE VIEW -->
+        <section id="view-table" class="hidden glass-panel rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+            <div class="p-4 border-b border-slate-800 bg-slate-900/80 flex items-center justify-between">
+                <div>
+                    <h2 class="text-sm font-bold text-white">Полный реестр всех кроссировок и соединений шкафа</h2>
+                    <p class="text-xs text-slate-400">Сортировка по типу кросс-панели и номеру порта</p>
+                </div>
+                <span class="text-xs text-slate-400 font-mono px-2.5 py-1 rounded bg-slate-800 border border-slate-700">184 Порта</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs font-mono">
+                    <thead class="bg-slate-900/90 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
+                        <tr>
+                            <th class="p-3.5">Кросс-панель</th>
+                            <th class="p-3.5">Порт Кросса</th>
+                            <th class="p-3.5">Назначение / VLAN</th>
+                            <th class="p-3.5">Подключение / OLT Port</th>
+                            <th class="p-3.5 text-right">Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 text-slate-300" id="table-body">
+                        <!-- Rendered by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Exact 1:1 mapped physical dataset for all 4 cross panels (16, 24, 48, 96)
+        const panelPortMaps = {
+            16: {
+                1: { vlan: 311, oltId: 2, oltPort: 11 },
+                3: { vlan: 403, oltId: 3, oltPort: 3 },
+                4: { vlan: 405, oltId: 3, oltPort: 5 },
+                5: { vlan: 410, oltId: 3, oltPort: 10 },
+                7: { vlan: 412, oltId: 3, oltPort: 12 },
+                8: { vlan: 414, oltId: 3, oltPort: 14 },
+                9: { vlan: 314, oltId: 2, oltPort: 14 },
+                10: { vlan: 316, oltId: 2, oltPort: 16 },
+                11: { vlan: 409, oltId: 3, oltPort: 9 },
+                15: { vlan: 315, oltId: 2, oltPort: 15 },
+                16: { vlan: 313, oltId: 2, oltPort: 13 }
+            },
+            24: {
+                1: { vlan: 210, oltId: 1, oltPort: 10 },
+                2: { vlan: 202, oltId: 1, oltPort: 2 },
+                3: { vlan: 203, oltId: 1, oltPort: 3 },
+                4: { vlan: 407, oltId: 3, oltPort: 7 },
+                5: { vlan: 206, oltId: 1, oltPort: 6 },
+                6: { vlan: 212, oltId: 1, oltPort: 12 },
+                7: { vlan: 406, oltId: 3, oltPort: 6 },
+                8: { vlan: 301, oltId: 2, oltPort: 1 },
+                9: { vlan: 304, oltId: 2, oltPort: 4 },
+                10: { vlan: 302, oltId: 2, oltPort: 2 },
+                11: { vlan: 303, oltId: 2, oltPort: 3 },
+                12: { vlan: 201, oltId: 1, oltPort: 1 },
+                13: { label: "Armix", isCustom: true },
+                14: { label: "Hovo data", isCustom: true },
+                23: { vlan: 208, oltId: 1, oltPort: 8 },
+                24: { label: "Ucom Davo", isCustom: true }
+            },
+            48: {
+                1: { vlan: 204, oltId: 1, oltPort: 4 },
+                2: { vlan: 401, oltId: 3, oltPort: 1 },
+                3: { vlan: 306, oltId: 2, oltPort: 6 },
+                4: { vlan: 306, oltId: 2, oltPort: 6 },
+                5: { label: "Hovo data", isCustom: true },
+                9: { vlan: 306, oltId: 2, oltPort: 6 },
+                47: { vlan: 306, oltId: 2, oltPort: 6 }
+            },
+            96: {
+                1: { vlan: 408, oltId: 3, oltPort: 8 },
+                2: { vlan: 209, oltId: 1, oltPort: 9 },
+                3: { vlan: 306, oltId: 2, oltPort: 6 },
+                4: { vlan: 402, oltId: 3, oltPort: 2 },
+                5: { vlan: 211, oltId: 1, oltPort: 11 },
+                6: { vlan: 307, oltId: 2, oltPort: 7 },
+                8: { vlan: 205, oltId: 1, oltPort: 5 },
+                9: { vlan: 216, oltId: 1, oltPort: 16 },
+                10: { vlan: 413, oltId: 3, oltPort: 13 },
+                12: { vlan: 308, oltId: 2, oltPort: 8 },
+                13: { vlan: 305, oltId: 2, oltPort: 5 },
+                14: { vlan: 415, oltId: 3, oltPort: 15 },
+                17: { vlan: 416, oltId: 3, oltPort: 16 },
+                18: { vlan: 310, oltId: 2, oltPort: 10 },
+                20: { vlan: 309, oltId: 2, oltPort: 9 },
+                21: { vlan: 312, oltId: 2, oltPort: 12 },
+                22: { label: "Arpinet TV-DATA", isCustom: true },
+                23: { vlan: 404, oltId: 3, oltPort: 4 },
+                24: { vlan: 411, oltId: 3, oltPort: 11 },
+                25: { vlan: 214, oltId: 1, oltPort: 14 },
+                26: { vlan: 215, oltId: 1, oltPort: 15 },
+                27: { vlan: 213, oltId: 1, oltPort: 13 },
+                28: { vlan: 306, oltId: 2, oltPort: 6 },
+                29: { vlan: 306, oltId: 2, oltPort: 6 },
+                32: { vlan: 207, oltId: 1, oltPort: 7 },
+                33: { vlan: 306, oltId: 2, oltPort: 6 },
+                34: { vlan: 306, oltId: 2, oltPort: 6 },
+                94: { label: "Team", isCustom: true },
+                95: { label: "Team", isCustom: true }
+            }
+        };
+
+        const patchPanels = [16, 24, 48, 96];
+        let currentCordFilter = 'all';
+        let selectedPort = null; // Sticky selection state
+
+        function initApp() {
+            renderRackRailsHoles();
+            renderServerRackCabinet();
+            renderTable();
+            updateCalculatedStats();
+            window.addEventListener('resize', debounceDrawCords);
+        }
+
+        function renderRackRailsHoles() {
+            const leftHoles = document.getElementById('left-rail-holes');
+            const rightHoles = document.getElementById('right-rail-holes');
+            
+            let holesHTML = '';
+            for (let u = 16; u >= 1; u--) {
+                holesHTML += `
+                    <div class="flex flex-col items-center gap-1 my-1">
+                        <span class="text-[9px] font-bold text-slate-500">${u}U</span>
+                        <div class="cage-nut-hole"></div>
+                        <div class="cage-nut-hole"></div>
+                    </div>
+                `;
+            }
+            leftHoles.innerHTML = holesHTML;
+            rightHoles.innerHTML = holesHTML;
+        }
+
+        function switchView(viewName) {
+            document.getElementById('view-rack').classList.toggle('hidden', viewName !== 'rack');
+            document.getElementById('view-cords').classList.toggle('hidden', viewName !== 'cords');
+            document.getElementById('view-table').classList.toggle('hidden', viewName !== 'table');
+
+            document.getElementById('btn-rack-view').className = viewName === 'rack' ? 'px-3 py-1.5 rounded-lg bg-sky-600 text-white font-semibold shadow-md transition-all flex items-center gap-1.5' : 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5';
+            document.getElementById('btn-cords-view').className = viewName === 'cords' ? 'px-3 py-1.5 rounded-lg bg-sky-600 text-white font-semibold shadow-md transition-all flex items-center gap-1.5' : 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5';
+            document.getElementById('btn-table-view').className = viewName === 'table' ? 'px-3 py-1.5 rounded-lg bg-sky-600 text-white font-semibold shadow-md transition-all flex items-center gap-1.5' : 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5';
+
+            if (viewName === 'cords') {
+                renderCordsView();
+                requestAnimationFrame(() => {
+                    setTimeout(drawPatchCords, 80);
+                });
+            }
+        }
+
+        function renderServerRackCabinet() {
+            const container = document.getElementById('rack-units-stack');
+            container.innerHTML = '';
+
+            // 1. Top Cable Manager Brush Panel (1U)
+            container.appendChild(createRackUnitHeader('1U', '1U Cable Management Brush Panel', 'Организатор кабелей ввода'));
+
+            // 2. OLT BDCOM #1 (1U)
+            container.appendChild(createOltRackUnit(1, "OLT 1 (BDCOM GP3600-16B)", "VLAN 201 - 216", "#10b981"));
+
+            // 3. OLT BDCOM #2 (1U)
+            container.appendChild(createOltRackUnit(2, "OLT 2 (BDCOM GP3600-16B)", "VLAN 301 - 316", "#3b82f6"));
+
+            // 4. OLT BDCOM #3 (1U)
+            container.appendChild(createOltRackUnit(3, "OLT 3 (BDCOM GP3600-16B)", "VLAN 401 - 416", "#a855f7"));
+
+            // 5. Cable Organizer Divider (1U)
+            container.appendChild(createRackUnitHeader('5U', '1U Optical Cable Organizer & Guide', 'Оптический кроссовый организатор'));
+
+            // 6. Cross Panel 16P (1U)
+            container.appendChild(createCrossRackUnit(16));
+
+            // 7. Cross Panel 24P (1U)
+            container.appendChild(createCrossRackUnit(24));
+
+            // 8. Cross Panel 48P (2U)
+            container.appendChild(createCrossRackUnit(48));
+
+            // 9. Cross Panel 96P (3U High Density)
+            container.appendChild(createCrossRackUnit(96));
+        }
+
+        function createRackEarHTML() {
+            return `
+                <div class="rack-ear w-5 h-full flex flex-col justify-between py-1.5 items-center flex-shrink-0 rounded-sm">
+                    <div class="screw-head"></div>
+                    <div class="screw-head"></div>
+                </div>
+            `;
+        }
+
+        function createRackUnitHeader(uTag, title, desc) {
+            const div = document.createElement('div');
+            div.className = 'flex items-center gap-1 bg-slate-900/90 border border-slate-800 rounded-lg p-1.5 text-xs font-mono text-slate-400';
+            div.innerHTML = `
+                ${createRackEarHTML()}
+                <div class="flex-grow px-3 py-1 bg-slate-950/80 rounded border border-slate-800/80 flex items-center justify-between">
+                    <span class="text-sky-400 font-bold">${uTag} — ${title}</span>
+                    <span class="text-[10px] text-slate-500">${desc}</span>
+                </div>
+                ${createRackEarHTML()}
+            `;
+            return div;
+        }
+
+        function createOltRackUnit(oltId, name, vlanRange, themeColor) {
+            const unit = document.createElement('div');
+            unit.className = 'unit-panel-bdcom rounded-lg p-2 border border-slate-800 shadow-xl flex items-center gap-2';
+
+            let portsGrid = '';
+            for (let p = 1; p <= 16; p++) {
+                const expectedVlan = (oltId * 100) + p + (oltId === 1 ? 100 : 0);
+                
+                // Check connected cross ports
+                const crossConnections = [];
+                patchPanels.forEach(pSize => {
+                    const pMap = panelPortMaps[pSize];
+                    Object.keys(pMap).forEach(cPort => {
+                        const entry = pMap[cPort];
+                        if (entry.oltId === oltId && entry.oltPort === p) {
+                            crossConnections.push(`${pSize}P (#${cPort})`);
+                        }
+                    });
+                });
+
+                const targetsStr = crossConnections.length > 0 ? crossConnections.join(', ') : 'Свободен';
+
+                portsGrid += `
+                    <div id="olt-port-card-${oltId}-${p}" onclick="selectOltPort(${oltId}, ${p})"
+                        class="olt-port-node sfp-slot p-1 rounded hover:border-sky-400 cursor-pointer transition-all flex flex-col justify-between items-center group relative min-w-[42px]"
+                        data-search="olt ${oltId} port ${p} vlan ${expectedVlan}">
+                        
+                        <div class="w-full flex items-center justify-between text-[9px] font-mono text-slate-400">
+                            <span class="font-bold text-white">#${p}</span>
+                            <span class="w-1.5 h-1.5 rounded-full led-green"></span>
+                        </div>
+
+                        <!-- Optical SFP Transceiver Body -->
+                        <div class="w-7 h-3.5 my-1 bg-slate-800 border border-slate-600 rounded-sm flex items-center justify-center shadow-inner">
+                            <div class="w-2 h-2 rounded-full" style="background: ${themeColor}"></div>
+                        </div>
+
+                        <span class="text-[8px] font-mono font-bold text-emerald-400 truncate max-w-[48px] text-center">V${expectedVlan}</span>
+                    </div>
+                `;
+            }
+
+            unit.innerHTML = `
+                ${createRackEarHTML()}
+
+                <!-- BDCOM Chassis Front Panel UI -->
+                <div class="flex-grow bg-slate-950/90 rounded-lg p-2.5 border border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-3">
+                    
+                    <!-- Left Brand & Status LEDs -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-2.5 h-8 rounded-full" style="background: ${themeColor}; box-shadow: 0 0 10px ${themeColor}"></div>
+                        <div>
+                            <div class="text-xs font-bold text-white font-mono flex items-center gap-2">
+                                ${name}
+                                <span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">1U</span>
+                            </div>
+                            <div class="text-[10px] text-slate-400 font-mono">${vlanRange}</div>
+                        </div>
+
+                        <!-- Device LED status array -->
+                        <div class="hidden sm:flex items-center gap-2 px-2 py-1 bg-slate-900 rounded border border-slate-800 text-[9px] font-mono">
+                            <div class="text-center"><div class="w-2 h-2 rounded-full led-green mx-auto"></div>PWR</div>
+                            <div class="text-center"><div class="w-2 h-2 rounded-full led-blue mx-auto animate-pulse"></div>RUN</div>
+                            <div class="text-center"><div class="w-2 h-2 rounded-full led-off mx-auto"></div>ALM</div>
+                        </div>
+                    </div>
+
+                    <!-- Middle 16 SFP PON Slots Grid -->
+                    <div class="grid grid-cols-8 sm:grid-cols-16 gap-1 w-full md:w-auto">
+                        ${portsGrid}
+                    </div>
+
+                    <!-- Right Management / Console / Uplink Ports -->
+                    <div class="hidden lg:flex items-center gap-2 border-l border-slate-800 pl-3">
+                        <div class="text-center font-mono text-[9px] text-slate-400">
+                            <div class="w-6 h-4 bg-slate-900 border border-slate-700 rounded mx-auto mb-0.5"></div>
+                            CONSOLE
+                        </div>
+                        <div class="text-center font-mono text-[9px] text-slate-400">
+                            <div class="w-6 h-4 bg-slate-900 border border-slate-700 rounded mx-auto mb-0.5"></div>
+                            MGMT
+                        </div>
+                        <div class="text-center font-mono text-[9px] text-emerald-400 font-bold">
+                            <div class="w-7 h-4 bg-slate-800 border border-emerald-500/50 rounded mx-auto mb-0.5 flex items-center justify-center">
+                                <span class="w-1.5 h-1.5 rounded-full led-green"></span>
+                            </div>
+                            10G GE
+                        </div>
+                    </div>
+
+                </div>
+
+                ${createRackEarHTML()}
+            `;
+
+            return unit;
+        }
+
+        function createCrossRackUnit(size) {
+            const unit = document.createElement('div');
+            unit.className = 'unit-panel-cross rounded-lg p-2 border border-slate-800 shadow-xl flex items-center gap-2';
+
+            const portMap = panelPortMaps[size] || {};
+            const occupiedCount = Object.keys(portMap).length;
+            const freeCount = size - occupiedCount;
+
+            let gridColsClass = 'grid-cols-8 sm:grid-cols-16';
+            if (size === 24) gridColsClass = 'grid-cols-6 sm:grid-cols-12 lg:grid-cols-24';
+            if (size === 48) gridColsClass = 'grid-cols-8 sm:grid-cols-16 lg:grid-cols-24';
+            if (size === 96) gridColsClass = 'grid-cols-8 sm:grid-cols-16 lg:grid-cols-24';
+
+            let portsGrid = `<div class="grid ${gridColsClass} gap-1.5 w-full">`;
+
+            for (let i = 1; i <= size; i++) {
+                const data = portMap[i];
+
+                if (data) {
+                    const isCustom = data.isCustom;
+                    const vlanText = isCustom ? data.label : `VLAN ${data.vlan}`;
+                    const portText = isCustom ? `СПЕЦ` : `OLT P${data.oltPort}`;
+                    const ledClass = isCustom ? 'led-amber' : 'led-green';
+                    const couplerClass = isCustom ? 'border-amber-500/60 bg-amber-950/40' : 'sc-coupler-green';
+
+                    portsGrid += `
+                        <div id="port-card-${size}-${i}" onclick="selectCrossPort(${size}, ${i})"
+                            class="port-socket active ${couplerClass} p-1 rounded cursor-pointer transition-all flex flex-col justify-between items-center text-center min-h-[52px]"
+                            data-search="cross ${i} ${vlanText} ${portText} panel ${size}">
+                            
+                            <div class="w-full flex justify-between items-center text-[8px] font-mono text-slate-200">
+                                <span class="font-bold">#${i}</span>
+                                <span class="w-1.5 h-1.5 rounded-full ${ledClass}"></span>
+                            </div>
+
+                            <div class="my-0.5 font-mono text-[9px] font-bold text-white truncate w-full">
+                                ${vlanText}
+                            </div>
+
+                            <div class="text-[8px] font-mono text-slate-300 font-medium">
+                                ${portText}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    portsGrid += `
+                        <div id="port-card-${size}-${i}" onclick="selectCrossPort(${size}, ${i})"
+                            class="port-socket sc-coupler-empty opacity-40 hover:opacity-100 p-1 rounded cursor-pointer transition-all flex flex-col justify-between items-center text-center min-h-[52px]"
+                            data-search="cross ${i} свободно empty panel ${size}">
+                            
+                            <div class="w-full flex justify-between items-center text-[8px] font-mono text-slate-600">
+                                <span>#${i}</span>
+                                <span class="w-1 h-1 rounded-full bg-slate-700"></span>
+                            </div>
+
+                            <div class="text-[9px] text-slate-600 font-mono">
+                                •
+                            </div>
+
+                            <div class="text-[7px] font-mono text-slate-600 uppercase">
+                                ПУСТ
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            portsGrid += `</div>`;
+
+            let uHeightTag = size === 96 ? '3U' : (size === 48 ? '2U' : '1U');
+
+            unit.innerHTML = `
+                ${createRackEarHTML()}
+
+                <!-- Cross Panel Front Faceplate -->
+                <div class="flex-grow bg-slate-950/90 rounded-lg p-2.5 border border-slate-800/80 space-y-2">
+                    <div class="flex items-center justify-between pb-1 border-b border-slate-800 text-xs font-mono">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-sm bg-sky-500 inline-block"></span>
+                            <span class="font-bold text-white">Оптическая Кросс-Панель ${size}P</span>
+                            <span class="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">${uHeightTag}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400">
+                            Занято: <b class="text-emerald-400">${occupiedCount}</b> / ${size} (${(occupiedCount / size * 100).toFixed(0)}%)
+                        </div>
+                    </div>
+
+                    ${portsGrid}
+                </div>
+
+                ${createRackEarHTML()}
+            `;
+
+            return unit;
+        }
+
+        function renderCordsView() {
+            const leftRack = document.getElementById('cords-left-rack');
+            const rightRack = document.getElementById('cords-right-rack');
+
+            leftRack.innerHTML = '';
+            rightRack.innerHTML = '';
+
+            // 1. Build Left Rack (Cross-Panels Active Sockets)
+            patchPanels.forEach(pSize => {
+                const pMap = panelPortMaps[pSize];
+                const activePorts = Object.keys(pMap).sort((a,b) => parseInt(a) - parseInt(b));
+
+                const panelDiv = document.createElement('div');
+                panelDiv.className = 'bg-slate-900/90 rounded-xl border border-slate-800 p-3 shadow-lg';
+
+                let header = `
+                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-800">
+                        <span class="text-xs font-bold text-sky-400 font-mono">КРОСС-ПАНЕЛЬ ${pSize}P</span>
+                        <span class="text-[10px] text-slate-400 font-mono">${activePorts.length} активных волокон</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                `;
+
+                activePorts.forEach(cPort => {
+                    const entry = pMap[cPort];
+                    const isCustom = entry.isCustom;
+                    const vlanText = isCustom ? entry.label : `VLAN ${entry.vlan}`;
+                    const borderCls = isCustom ? 'border-amber-500/40' : 'border-emerald-500/40';
+                    const textCls = isCustom ? 'text-amber-400' : 'text-emerald-400';
+
+                    header += `
+                        <div id="cord-src-${pSize}-${cPort}"
+                            onclick="selectCrossPort(${pSize}, ${cPort})"
+                            onmouseenter="highlightCord('cross', ${pSize}, ${cPort})"
+                            onmouseleave="resetCordHighlight()"
+                            class="cord-socket-node bg-slate-950 border ${borderCls} hover:border-sky-400 rounded-lg p-2 cursor-pointer transition-all flex items-center justify-between text-xs font-mono">
+                            <div>
+                                <div class="font-bold text-white text-[11px]">#${cPort}</div>
+                                <div class="text-[10px] ${textCls}">${vlanText}</div>
+                            </div>
+                            <div class="w-2.5 h-2.5 rounded-full ${isCustom ? 'led-amber' : 'led-green'} cord-pin-left"></div>
+                        </div>
+                    `;
+                });
+
+                header += `</div>`;
+                panelDiv.innerHTML = header;
+                leftRack.appendChild(panelDiv);
+            });
+
+            // 2. Build Right Rack (3 OLTs with 16 Ports)
+            const olts = [
+                { id: 1, name: "OLT 1 (VLAN 2xx)", color: "#10b981", border: "border-emerald-500/40" },
+                { id: 2, name: "OLT 2 (VLAN 3xx)", color: "#3b82f6", border: "border-blue-500/40" },
+                { id: 3, name: "OLT 3 (VLAN 4xx)", color: "#a855f7", border: "border-purple-500/40" }
+            ];
+
+            olts.forEach(olt => {
+                const oltDiv = document.createElement('div');
+                oltDiv.className = `bg-slate-900/90 rounded-xl border ${olt.border} p-3 shadow-lg`;
+
+                let header = `
+                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-800">
+                        <span class="text-xs font-bold text-white font-mono flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full" style="background:${olt.color}"></span>
+                            ${olt.name}
+                        </span>
+                        <span class="text-[10px] text-slate-400 font-mono">16 PON</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                `;
+
+                for (let p = 1; p <= 16; p++) {
+                    const expectedVlan = (olt.id * 100) + p + (olt.id === 1 ? 100 : 0);
+                    header += `
+                        <div id="cord-dst-${olt.id}-${p}"
+                            onclick="selectOltPort(${olt.id}, ${p})"
+                            onmouseenter="highlightCord('olt', ${olt.id}, ${p})"
+                            onmouseleave="resetCordHighlight()"
+                            class="cord-socket-node bg-slate-950 border border-slate-800 hover:border-sky-400 rounded-lg p-1.5 cursor-pointer transition-all flex items-center justify-between text-xs font-mono">
+                            <div class="w-2.5 h-2.5 rounded-full led-green cord-pin-right"></div>
+                            <div class="text-right">
+                                <div class="font-bold text-white text-[10px]">Port ${p}</div>
+                                <div class="text-[9px] text-slate-400">VLAN ${expectedVlan}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                header += `</div>`;
+                oltDiv.innerHTML = header;
+                rightRack.appendChild(oltDiv);
+            });
+
+            setTimeout(drawPatchCords, 100);
+        }
+
+        function drawPatchCords() {
+            const svg = document.getElementById('cords-svg-layer');
+            const wrapper = document.getElementById('cords-canvas-wrapper');
+            if (!svg || !wrapper) return;
+
+            svg.innerHTML = '';
+            const wrapperRect = wrapper.getBoundingClientRect();
+
+            patchPanels.forEach(pSize => {
+                const pMap = panelPortMaps[pSize];
+                Object.keys(pMap).forEach(cPort => {
+                    const entry = pMap[cPort];
+                    if (entry.isCustom) return;
+
+                    if (currentCordFilter !== 'all' && parseInt(currentCordFilter) !== entry.oltId) {
+                        return;
+                    }
+
+                    const srcEl = document.getElementById(`cord-src-${pSize}-${cPort}`);
+                    const dstEl = document.getElementById(`cord-dst-${entry.oltId}-${entry.oltPort}`);
+
+                    if (srcEl && dstEl) {
+                        const srcPin = srcEl.querySelector('.cord-pin-left') || srcEl;
+                        const dstPin = dstEl.querySelector('.cord-pin-right') || dstEl;
+
+                        const srcRect = srcPin.getBoundingClientRect();
+                        const dstRect = dstPin.getBoundingClientRect();
+
+                        const x1 = srcRect.left + srcRect.width / 2 - wrapperRect.left;
+                        const y1 = srcRect.top + srcRect.height / 2 - wrapperRect.top;
+                        const x2 = dstRect.left + dstRect.width / 2 - wrapperRect.left;
+                        const y2 = dstRect.top + dstRect.height / 2 - wrapperRect.top;
+
+                        const dx = Math.abs(x2 - x1) * 0.45;
+                        const pathData = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+
+                        let cordColor = "#10b981"; // OLT 1
+                        if (entry.oltId === 2) cordColor = "#3b82f6"; // OLT 2
+                        if (entry.oltId === 3) cordColor = "#a855f7"; // OLT 3
+
+                        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        path.setAttribute('d', pathData);
+                        path.setAttribute('fill', 'none');
+                        path.setAttribute('stroke', cordColor);
+                        path.setAttribute('stroke-width', '2');
+                        path.setAttribute('stroke-opacity', '0.5');
+                        path.setAttribute('class', 'patch-cord-line transition-all duration-300');
+                        path.setAttribute('data-panel', pSize);
+                        path.setAttribute('data-cross', cPort);
+                        path.setAttribute('data-olt', entry.oltId);
+                        path.setAttribute('data-oltport', entry.oltPort);
+
+                        svg.appendChild(path);
+                    }
+                });
+            });
+
+            if (selectedPort) {
+                if (selectedPort.type === 'cross') {
+                    highlightCord('cross', selectedPort.panelSize, selectedPort.portNum, true);
+                } else if (selectedPort.type === 'olt') {
+                    highlightCord('olt', selectedPort.oltId, selectedPort.portNum, true);
+                }
+            }
+        }
+
+        function clearAllHighlights() {
+            document.querySelectorAll('.port-socket, .olt-port-node, .cord-socket-node').forEach(el => {
+                el.classList.remove('ring-2', 'ring-sky-400', 'ring-emerald-400', 'scale-105', 'bg-sky-950/80', 'bg-emerald-950/80');
+            });
+            resetCordHighlight(true);
+        }
+
+        function highlightCord(type, param1, param2, force = false) {
+            const paths = document.querySelectorAll('.patch-cord-line');
+            paths.forEach(p => {
+                let match = false;
+                if (type === 'cross') {
+                    match = p.getAttribute('data-panel') == param1 && p.getAttribute('data-cross') == param2;
+                } else if (type === 'olt') {
+                    match = p.getAttribute('data-olt') == param1 && p.getAttribute('data-oltport') == param2;
+                }
+
+                if (match) {
+                    p.setAttribute('stroke-width', '4');
+                    p.setAttribute('stroke-opacity', '1');
+                    p.setAttribute('filter', 'drop-shadow(0 0 6px currentColor)');
+                } else if (!selectedPort || force) {
+                    p.setAttribute('stroke-opacity', '0.08');
+                    p.setAttribute('stroke-width', '1.5');
+                    p.removeAttribute('filter');
+                }
+            });
+        }
+
+        function resetCordHighlight(force = false) {
+            if (!force && selectedPort) {
+                if (selectedPort.type === 'cross') {
+                    highlightCord('cross', selectedPort.panelSize, selectedPort.portNum, true);
+                } else if (selectedPort.type === 'olt') {
+                    highlightCord('olt', selectedPort.oltId, selectedPort.portNum, true);
+                }
+                return;
+            }
+
+            const paths = document.querySelectorAll('.patch-cord-line');
+            paths.forEach(p => {
+                p.setAttribute('stroke-width', '2');
+                p.setAttribute('stroke-opacity', '0.5');
+                p.removeAttribute('filter');
+            });
+        }
+
+        function selectCrossPort(panelSize, portNum) {
+            const key = `cross-${panelSize}-${portNum}`;
+            
+            if (selectedPort && selectedPort.key === key) {
+                selectedPort = null;
+                clearAllHighlights();
+                closeInspector(true);
+                return;
+            }
+
+            selectedPort = { type: 'cross', key: key, panelSize: panelSize, portNum: portNum };
+            clearAllHighlights();
+
+            const data = panelPortMaps[panelSize]?.[portNum];
+            
+            // Highlight source Cross Port card
+            const targetEl = document.getElementById(`port-card-${panelSize}-${portNum}`);
+            if (targetEl) {
+                targetEl.classList.add('ring-2', 'ring-sky-400', 'scale-105', 'bg-sky-950/80');
+            }
+
+            // Highlight target OLT Port card
+            if (data && !data.isCustom && data.oltId && data.oltPort) {
+                const oltEl = document.getElementById(`olt-port-card-${data.oltId}-${data.oltPort}`);
+                if (oltEl) {
+                    oltEl.classList.add('ring-2', 'ring-emerald-400', 'scale-105', 'bg-emerald-950/80');
+                }
+            }
+
+            // Highlight Cords View elements
+            const cordSrc = document.getElementById(`cord-src-${panelSize}-${portNum}`);
+            if (cordSrc) {
+                cordSrc.classList.add('ring-2', 'ring-sky-400');
+            }
+            if (data && !data.isCustom) {
+                const cordDst = document.getElementById(`cord-dst-${data.oltId}-${data.oltPort}`);
+                if (cordDst) {
+                    cordDst.classList.add('ring-2', 'ring-emerald-400');
+                }
+                highlightCord('cross', panelSize, portNum, true);
+            }
+
+            if (data) {
+                if (data.isCustom) {
+                    openInspector(
+                        `Панель ${panelSize}P — Кросс #${portNum} (${data.label})`,
+                        [
+                            { label: 'Сервис', val: data.label },
+                            { label: 'Статус', val: 'СПЕЦ. ЛИНК' }
+                        ]
+                    );
+                } else {
+                    openInspector(
+                        `Кросс #${portNum} (${panelSize}P) ➔ OLT ${data.oltId} (Port ${data.oltPort})`,
+                        [
+                            { label: 'Панель', val: `${panelSize}P` },
+                            { label: 'Кросс-Порт', val: `#${portNum}` },
+                            { label: 'OLT', val: `BDCOM OLT ${data.oltId}` },
+                            { label: 'OLT Port', val: `Port ${data.oltPort}` },
+                            { label: 'VLAN', val: `VLAN ${data.vlan}` },
+                            { label: 'Статус', val: 'АКТИВЕН' }
+                        ]
+                    );
+                }
+            } else {
+                openInspector(
+                    `Панель ${panelSize}P — Кросс #${portNum}`,
+                    [
+                        { label: 'Статус', val: 'СВОБОДЕН' },
+                        { label: 'Подключение', val: 'Нет привязки' }
+                    ]
+                );
+            }
+        }
+
+        function selectOltPort(oltId, portNum) {
+            const key = `olt-${oltId}-${portNum}`;
+
+            if (selectedPort && selectedPort.key === key) {
+                selectedPort = null;
+                clearAllHighlights();
+                closeInspector(true);
+                return;
+            }
+
+            selectedPort = { type: 'olt', key: key, oltId: oltId, portNum: portNum };
+            clearAllHighlights();
+
+            const expectedVlan = (oltId * 100) + portNum + (oltId === 1 ? 100 : 0);
+
+            const oltEl = document.getElementById(`olt-port-card-${oltId}-${portNum}`);
+            if (oltEl) {
+                oltEl.classList.add('ring-2', 'ring-sky-400', 'scale-105', 'bg-sky-950/80');
+            }
+
+            const matches = [];
+            patchPanels.forEach(pSize => {
+                const pMap = panelPortMaps[pSize];
+                Object.keys(pMap).forEach(cPort => {
+                    const entry = pMap[cPort];
+                    if (entry.oltId === oltId && entry.oltPort === portNum) {
+                        matches.push({ panelSize: pSize, crossPort: cPort });
+                        
+                        const crossEl = document.getElementById(`port-card-${pSize}-${cPort}`);
+                        if (crossEl) {
+                            crossEl.classList.add('ring-2', 'ring-emerald-400', 'scale-105', 'bg-emerald-950/80');
+                        }
+
+                        const cordSrc = document.getElementById(`cord-src-${pSize}-${cPort}`);
+                        if (cordSrc) {
+                            cordSrc.classList.add('ring-2', 'ring-emerald-400');
+                        }
+                    }
+                });
+            });
+
+            const cordDst = document.getElementById(`cord-dst-${oltId}-${portNum}`);
+            if (cordDst) {
+                cordDst.classList.add('ring-2', 'ring-sky-400');
+            }
+
+            highlightCord('olt', oltId, portNum, true);
+
+            const matchLabels = matches.map(m => `${m.panelSize}P (#${m.crossPort})`);
+
+            openInspector(
+                `BDCOM OLT ${oltId} — PON Port ${portNum} ➔ Кросс: ${matchLabels.length > 0 ? matchLabels.join(', ') : 'Нет'}`,
+                [
+                    { label: 'Устройство', val: `OLT ${oltId}` },
+                    { label: 'PON Port', val: `Port ${portNum}` },
+                    { label: 'VLAN', val: `VLAN ${expectedVlan}` },
+                    { label: 'Кросс-панели', val: matchLabels.length > 0 ? matchLabels.join(', ') : 'Не скроссирован' },
+                    { label: 'Статус', val: 'АКТИВЕН' }
+                ]
+            );
+        }
+
+        function filterCords(oltFilter) {
+            currentCordFilter = oltFilter;
+            document.querySelectorAll('.cord-filter-btn').forEach(btn => {
+                const f = btn.getAttribute('data-filter');
+                if (f == oltFilter) {
+                    btn.classList.add('ring-2', 'ring-sky-400');
+                } else {
+                    btn.classList.remove('ring-2', 'ring-sky-400');
+                }
+            });
+            drawPatchCords();
+        }
+
+        let resizeTimer;
+        function debounceDrawCords() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (!document.getElementById('view-cords').classList.contains('hidden')) {
+                    drawPatchCords();
+                }
+            }, 150);
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            const tableRows = [];
+
+            patchPanels.forEach(pSize => {
+                const pMap = panelPortMaps[pSize];
+                Object.keys(pMap).forEach(cPort => {
+                    const entry = pMap[cPort];
+                    tableRows.push({
+                        panelSize: pSize,
+                        crossPort: parseInt(cPort),
+                        isCustom: !!entry.isCustom,
+                        vlanOrLabel: entry.isCustom ? entry.label : `VLAN ${entry.vlan}`,
+                        oltInfo: entry.isCustom ? 'Спец. Сервис / Uplink' : `BDCOM OLT ${entry.oltId} (Port ${entry.oltPort})`
+                    });
+                });
+            });
+
+            tableRows.sort((a, b) => a.panelSize - b.panelSize || a.crossPort - b.crossPort);
+
+            tableRows.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-800/60 cursor-pointer transition-colors search-row';
+                tr.setAttribute('data-search', `panel ${item.panelSize} cross ${item.crossPort} ${item.vlanOrLabel} ${item.oltInfo}`);
+                tr.onclick = () => selectCrossPort(item.panelSize, item.crossPort);
+
+                tr.innerHTML = `
+                    <td class="p-3.5 text-slate-300 font-bold">Кросс-панель ${item.panelSize}P</td>
+                    <td class="p-3.5 font-bold text-sky-400">Cross #${item.crossPort}</td>
+                    <td class="p-3.5">
+                        <span class="px-2 py-0.5 rounded ${item.isCustom ? 'bg-amber-950/80 text-amber-400 border border-amber-800/60' : 'bg-slate-800 border border-slate-700 text-emerald-400'} font-bold">
+                            ${item.vlanOrLabel}
+                        </span>
+                    </td>
+                    <td class="p-3.5 text-slate-200">${item.oltInfo}</td>
+                    <td class="p-3.5 text-right">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-950/80 text-emerald-400 border border-emerald-800/60 text-[11px] font-bold">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> АКТИВЕН
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openInspector(title, badges) {
+            const panel = document.getElementById('inspector-panel');
+            const titleEl = document.getElementById('inspector-title');
+            const badgeContainer = document.getElementById('inspector-badge-container');
+
+            titleEl.textContent = title;
+            badgeContainer.innerHTML = badges.map(b => `
+                <div class="px-3 py-1 rounded-lg bg-slate-900 border border-slate-700 text-slate-300">
+                    <span class="text-slate-500 font-normal mr-1">${b.label}:</span>
+                    <b class="text-emerald-400 font-bold">${b.val}</b>
+                </div>
+            `).join('');
+
+            panel.classList.remove('hidden');
+        }
+
+        function closeInspector(resetState = true) {
+            document.getElementById('inspector-panel').classList.add('hidden');
+            if (resetState) {
+                selectedPort = null;
+                clearAllHighlights();
+            }
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            document.querySelectorAll('.port-socket, .olt-port-node').forEach(card => {
+                const text = card.getAttribute('data-search') || '';
+                card.style.display = (!query || text.toLowerCase().includes(query)) ? '' : 'none';
+            });
+
+            document.querySelectorAll('.search-row').forEach(row => {
+                const text = row.getAttribute('data-search') || '';
+                row.style.display = (!query || text.toLowerCase().includes(query)) ? '' : 'none';
+            });
+        }
+
+        function updateCalculatedStats() {
+            let occupied = 0;
+            patchPanels.forEach(size => {
+                occupied += Object.keys(panelPortMaps[size] || {}).length;
+            });
+            
+            const free = 184 - occupied;
+            document.getElementById('stat-occupied').textContent = occupied;
+            document.getElementById('stat-free').textContent = free;
+            document.getElementById('stat-occupied-pct').textContent = `${(occupied / 184 * 100).toFixed(1)}%`;
+            document.getElementById('stat-free-pct').textContent = `${(free / 184 * 100).toFixed(1)}%`;
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+
+    </script>
+</body>
+</html>
