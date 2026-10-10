@@ -124,7 +124,7 @@
         }
         .port-socket:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
         }
 
         /* LED status lights */
@@ -187,7 +187,7 @@
                         Серверный Шкаф 19" (Rack Cabinet) — OLT BDCOM & Кроссы
                         <span class="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-sky-950/80 text-sky-400 border border-sky-500/30">RACK-01</span>
                     </h1>
-                    <p class="text-xs text-slate-400">Топология 184 портов кросс-панелей (96P, 48P, 24P, 16P) + 3x OLT BDCOM (48 PON)</p>
+                    <p class="text-xs text-slate-400">Топология 184 портов кросс-панелей (96P, 48P, 24P, 16P) + Привязка Кварталов (Թաղամասեր)</p>
                 </div>
             </div>
 
@@ -221,12 +221,12 @@
                     </button>
                     <button id="btn-table-view" onclick="switchView('table')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-                        Реестр
+                        Реестр (Кварталы)
                     </button>
                 </div>
 
                 <!-- Search Bar -->
-                <div class="relative flex-1 lg:w-56">
+                <div class="relative flex-1 lg:w-60">
                     <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
                         <svg class="h-3.5 w-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -234,7 +234,7 @@
                     </div>
                     <input type="text" id="searchInput" oninput="handleSearch()"
                         class="block w-full pl-8 pr-3 py-1.5 border border-slate-700/80 rounded-xl bg-slate-900/90 text-slate-200 text-xs placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 font-mono transition-all" 
-                        placeholder="Поиск (311, Armix, Hovo)...">
+                        placeholder="Поиск района (Սլաբոդկա, Կամո, 311)...">
                 </div>
             </div>
         </div>
@@ -291,7 +291,7 @@
             <div class="flex items-center gap-3">
                 <div class="w-3.5 h-3.5 rounded-full led-green"></div>
                 <div>
-                    <span class="text-[10px] text-sky-400 font-mono uppercase tracking-widest font-semibold">Инспектор Подключений Стойки</span>
+                    <span class="text-[10px] text-sky-400 font-mono uppercase tracking-widest font-semibold">Инспектор Подключений & Районов</span>
                     <h3 class="text-sm font-bold text-white mt-0.5" id="inspector-title">Выберите порт в шкафу</h3>
                 </div>
             </div>
@@ -310,7 +310,7 @@
                     <h2 class="text-base font-bold text-white flex items-center gap-2">
                         19" Серверный Шкаф (42U Server Rack Cabinet)
                     </h2>
-                    <p class="text-xs text-slate-400">Реалистичная компоновка оборудования по юнитам (1U - 16U). Кликните по любому порту OLT или Кросса.</p>
+                    <p class="text-xs text-slate-400">Наведите или кликните по любому порту для просмотра привязанного микрорайона / VLAN</p>
                 </div>
                 <div class="flex items-center gap-3 text-xs font-mono bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
                     <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block shadow-sm"></span> PON Порт</span>
@@ -346,9 +346,8 @@
                     
                     <!-- Left Rack Mounting Rail with Cage Nut Holes & RU Markers -->
                     <div class="rack-rail w-8 sm:w-10 flex-shrink-0 flex flex-col justify-between py-2 items-center text-[10px] font-mono text-slate-500 select-none">
-                        <!-- Standard RU Rail Holes -->
                         <div class="space-y-6 flex flex-col items-center w-full" id="left-rail-holes">
-                            <!-- Populated dynamically / repetitive cage nut holes -->
+                            <!-- Populated dynamically -->
                         </div>
                     </div>
 
@@ -382,7 +381,7 @@
                     <h2 class="text-base font-bold text-white flex items-center gap-2">
                         Интерактивная Трассировка Оптических Патч-Кордов
                     </h2>
-                    <p class="text-xs text-slate-400">Наведите или кликните по узлу для прослеживания пути волокна от Кросс-панели до OLT</p>
+                    <p class="text-xs text-slate-400">Наведите или кликните по узлу для прослеживания пути волокна от Кросс-панели к OLT</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
                     <span class="text-slate-400 mr-1">Фильтр OLT:</span>
@@ -414,7 +413,7 @@
         <section id="view-table" class="hidden glass-panel rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
             <div class="p-4 border-b border-slate-800 bg-slate-900/80 flex items-center justify-between">
                 <div>
-                    <h2 class="text-sm font-bold text-white">Полный реестр всех кроссировок и соединений шкафа</h2>
+                    <h2 class="text-sm font-bold text-white">Полный реестр всех кроссировок и адресов микрорайонов</h2>
                     <p class="text-xs text-slate-400">Сортировка по типу кросс-панели и номеру порта</p>
                 </div>
                 <span class="text-xs text-slate-400 font-mono px-2.5 py-1 rounded bg-slate-800 border border-slate-700">184 Порта</span>
@@ -425,7 +424,8 @@
                         <tr>
                             <th class="p-3.5">Кросс-панель</th>
                             <th class="p-3.5">Порт Кросса</th>
-                            <th class="p-3.5">Назначение / VLAN</th>
+                            <th class="p-3.5">Район / Микрорайон (Թաղամաս)</th>
+                            <th class="p-3.5">VLAN / Сервис</th>
                             <th class="p-3.5">Подключение / OLT Port</th>
                             <th class="p-3.5 text-right">Статус</th>
                         </tr>
@@ -440,84 +440,83 @@
     </main>
 
     <script>
-        // Exact 1:1 mapped physical dataset for all 4 cross panels (16, 24, 48, 96)
+        // Exact 1:1 mapped physical dataset for all 4 cross panels with location names (Թաղամաս / տեղանուն)
         const panelPortMaps = {
             16: {
-                1: { vlan: 311, oltId: 2, oltPort: 11 },
-                3: { vlan: 403, oltId: 3, oltPort: 3 },
-                4: { vlan: 405, oltId: 3, oltPort: 5 },
-                5: { vlan: 410, oltId: 3, oltPort: 10 },
-                7: { vlan: 412, oltId: 3, oltPort: 12 },
-                8: { vlan: 414, oltId: 3, oltPort: 14 },
-                9: { vlan: 314, oltId: 2, oltPort: 14 },
-                10: { vlan: 316, oltId: 2, oltPort: 16 },
-                11: { vlan: 409, oltId: 3, oltPort: 9 },
-                15: { vlan: 315, oltId: 2, oltPort: 15 },
-                16: { vlan: 313, oltId: 2, oltPort: 13 }
+                1: { vlan: 311, oltId: 2, oltPort: 11, location: "Քոշտոյան" },
+                3: { vlan: 403, oltId: 3, oltPort: 3, location: "Մաքսատուն" },
+                4: { vlan: 405, oltId: 3, oltPort: 5, location: "Գևորգյան" },
+                5: { vlan: 410, oltId: 3, oltPort: 10, location: "Սոֆխոզի շենքեր" },
+                7: { vlan: 412, oltId: 3, oltPort: 12, location: "Խանդիլյան 1" },
+                8: { vlan: 414, oltId: 3, oltPort: 14, location: "Խանդիլյան 2" },
+                9: { vlan: 314, oltId: 2, oltPort: 14, location: "Կարեն Դեմիրճյան" },
+                10: { vlan: 316, oltId: 2, oltPort: 16, location: "Սավոյանի վիշկա" },
+                11: { vlan: 409, oltId: 3, oltPort: 9, location: "Մանուշյան" },
+                15: { vlan: 315, oltId: 2, oltPort: 15, location: "Գերցեն" },
+                16: { vlan: 313, oltId: 2, oltPort: 13, location: "Տիմիրյազև" }
             },
             24: {
-                1: { vlan: 210, oltId: 1, oltPort: 10 },
-                2: { vlan: 202, oltId: 1, oltPort: 2 },
-                3: { vlan: 203, oltId: 1, oltPort: 3 },
-                4: { vlan: 407, oltId: 3, oltPort: 7 },
-                5: { vlan: 206, oltId: 1, oltPort: 6 },
-                6: { vlan: 212, oltId: 1, oltPort: 12 },
-                7: { vlan: 406, oltId: 3, oltPort: 6 },
-                8: { vlan: 301, oltId: 2, oltPort: 1 },
-                9: { vlan: 304, oltId: 2, oltPort: 4 },
-                10: { vlan: 302, oltId: 2, oltPort: 2 },
-                11: { vlan: 303, oltId: 2, oltPort: 3 },
-                12: { vlan: 201, oltId: 1, oltPort: 1 },
-                13: { label: "Armix", isCustom: true },
-                14: { label: "Hovo data", isCustom: true },
-                23: { vlan: 208, oltId: 1, oltPort: 8 },
-                24: { label: "Ucom Davo", isCustom: true }
+                1: { vlan: 210, oltId: 1, oltPort: 10, location: "Մհեր Մկրտչյան" },
+                2: { vlan: 202, oltId: 1, oltPort: 2, location: "Իսահակյան փողոց" },
+                3: { vlan: 203, oltId: 1, oltPort: 3, location: "Պոլիտեխնիկ, Ձորի Մայլա" },
+                4: { vlan: 407, oltId: 3, oltPort: 7, location: "Բարակներ" },
+                5: { vlan: 206, oltId: 1, oltPort: 6, location: "Բագրատունյաց" },
+                6: { vlan: 212, oltId: 1, oltPort: 12, location: "Պաբեդա Ռաբիզ" },
+                7: { vlan: 406, oltId: 3, oltPort: 6, location: "Մազմանյան" },
+                8: { vlan: 301, oltId: 2, oltPort: 1, location: "Խրիմյան Հայրիկ" },
+                9: { vlan: 304, oltId: 2, oltPort: 4, location: "Կաթելնի Հնոցավան" },
+                10: { vlan: 302, oltId: 2, oltPort: 2, location: "Էլիտար" },
+                11: { vlan: 303, oltId: 2, oltPort: 3, location: "Շչեդրին" },
+                12: { vlan: 201, oltId: 1, oltPort: 1, location: "Շիրակշին" },
+                13: { label: "Armix", isCustom: true, location: "Armix Service" },
+                14: { label: "Hovo data", isCustom: true, location: "Hovo data Service" },
+                23: { vlan: 208, oltId: 1, oltPort: 8, location: "Քութասյան" },
+                24: { label: "Ucom Davo", isCustom: true, location: "Ucom Davo Service" }
             },
             48: {
-                1: { vlan: 204, oltId: 1, oltPort: 4 },
-                2: { vlan: 401, oltId: 3, oltPort: 1 },
-                3: { vlan: 306, oltId: 2, oltPort: 6 },
-                4: { vlan: 306, oltId: 2, oltPort: 6 },
-                5: { label: "Hovo data", isCustom: true },
-                9: { vlan: 306, oltId: 2, oltPort: 6 },
-                47: { vlan: 306, oltId: 2, oltPort: 6 }
+                1: { vlan: 204, oltId: 1, oltPort: 4, location: "Վասմոյի" },
+                2: { vlan: 401, oltId: 3, oltPort: 1, location: "Ավստրիական" },
+                3: { vlan: 306, oltId: 2, oltPort: 6, location: "58" },
+                5: { label: "Hovo data", isCustom: true, location: "Hovo data Service" },
+                9: { vlan: 306, oltId: 2, oltPort: 6, location: "58" },
+                47: { vlan: 306, oltId: 2, oltPort: 6, location: "58" }
             },
             96: {
-                1: { vlan: 408, oltId: 3, oltPort: 8 },
-                2: { vlan: 209, oltId: 1, oltPort: 9 },
-                3: { vlan: 306, oltId: 2, oltPort: 6 },
-                4: { vlan: 402, oltId: 3, oltPort: 2 },
-                5: { vlan: 211, oltId: 1, oltPort: 11 },
-                6: { vlan: 307, oltId: 2, oltPort: 7 },
-                8: { vlan: 205, oltId: 1, oltPort: 5 },
-                9: { vlan: 216, oltId: 1, oltPort: 16 },
-                10: { vlan: 413, oltId: 3, oltPort: 13 },
-                12: { vlan: 308, oltId: 2, oltPort: 8 },
-                13: { vlan: 305, oltId: 2, oltPort: 5 },
-                14: { vlan: 415, oltId: 3, oltPort: 15 },
-                17: { vlan: 416, oltId: 3, oltPort: 16 },
-                18: { vlan: 310, oltId: 2, oltPort: 10 },
-                20: { vlan: 309, oltId: 2, oltPort: 9 },
-                21: { vlan: 312, oltId: 2, oltPort: 12 },
-                22: { label: "Arpinet TV-DATA", isCustom: true },
-                23: { vlan: 404, oltId: 3, oltPort: 4 },
-                24: { vlan: 411, oltId: 3, oltPort: 11 },
-                25: { vlan: 214, oltId: 1, oltPort: 14 },
-                26: { vlan: 215, oltId: 1, oltPort: 15 },
-                27: { vlan: 213, oltId: 1, oltPort: 13 },
-                28: { vlan: 306, oltId: 2, oltPort: 6 },
-                29: { vlan: 306, oltId: 2, oltPort: 6 },
-                32: { vlan: 207, oltId: 1, oltPort: 7 },
-                33: { vlan: 306, oltId: 2, oltPort: 6 },
-                34: { vlan: 306, oltId: 2, oltPort: 6 },
-                94: { label: "Team", isCustom: true },
-                95: { label: "Team", isCustom: true }
+                1: { vlan: 408, oltId: 3, oltPort: 8, location: "Սլաբոդկա" },
+                2: { vlan: 209, oltId: 1, oltPort: 9, location: "Շիրակացի" },
+                3: { vlan: 306, oltId: 2, oltPort: 6, location: "58" },
+                4: { vlan: 402, oltId: 3, oltPort: 2, location: "Նոր Ախուրյան" },
+                5: { vlan: 211, oltId: 1, oltPort: 11, location: "Հ. Սարգսյան" },
+                6: { vlan: 307, oltId: 2, oltPort: 7, location: "Կոմիսարներ" },
+                8: { vlan: 205, oltId: 1, oltPort: 5, location: "Մեծ Բերդ" },
+                9: { vlan: 216, oltId: 1, oltPort: 16, location: "Սևերսկի Տերգաբրիելյան" },
+                10: { vlan: 413, oltId: 3, oltPort: 13, location: "Արապի 1" },
+                12: { vlan: 308, oltId: 2, oltPort: 8, location: "Կոմբինատ" },
+                13: { vlan: 305, oltId: 2, oltPort: 5, location: "Կոմբինատ" },
+                14: { vlan: 415, oltId: 3, oltPort: 15, location: "Այգաբաց" },
+                17: { vlan: 416, oltId: 3, oltPort: 16, location: "Օդանավակայան" },
+                18: { vlan: 310, oltId: 2, oltPort: 10, location: "Լալայանի ավտոկայան" },
+                20: { vlan: 309, oltId: 2, oltPort: 9, location: "Թուրք Մայլա" },
+                21: { vlan: 312, oltId: 2, oltPort: 12, location: "Ավզնոց" },
+                22: { label: "Arpinet TV-DATA", isCustom: true, location: "Arpinet Service" },
+                23: { vlan: 404, oltId: 3, oltPort: 4, location: "Պաբեդա 2" },
+                24: { vlan: 411, oltId: 3, oltPort: 11, location: "Նորավան" },
+                25: { vlan: 214, oltId: 1, oltPort: 14, location: "Բուլվարնի" },
+                26: { vlan: 215, oltId: 1, oltPort: 15, location: "Բուլվարնի" },
+                27: { vlan: 213, oltId: 1, oltPort: 13, location: "Բուլվարնի" },
+                28: { vlan: 306, oltId: 2, oltPort: 6, location: "306 (58)" },
+                29: { vlan: 306, oltId: 2, oltPort: 6, location: "306 (58)" },
+                32: { vlan: 207, oltId: 1, oltPort: 7, location: "Կամո" },
+                33: { vlan: 306, oltId: 2, oltPort: 6, location: "Խառը" },
+                34: { vlan: 306, oltId: 2, oltPort: 6, location: "306 (58)" },
+                94: { label: "Team", isCustom: true, location: "Team Service" },
+                95: { label: "Team", isCustom: true, location: "Team Service" }
             }
         };
 
         const patchPanels = [16, 24, 48, 96];
         let currentCordFilter = 'all';
-        let selectedPort = null; // Sticky selection state
+        let selectedPort = null;
 
         function initApp() {
             renderRackRailsHoles();
@@ -566,31 +565,15 @@
             const container = document.getElementById('rack-units-stack');
             container.innerHTML = '';
 
-            // 1. Top Cable Manager Brush Panel (1U)
             container.appendChild(createRackUnitHeader('1U', '1U Cable Management Brush Panel', 'Организатор кабелей ввода'));
-
-            // 2. OLT BDCOM #1 (1U)
             container.appendChild(createOltRackUnit(1, "OLT 1 (BDCOM GP3600-16B)", "VLAN 201 - 216", "#10b981"));
-
-            // 3. OLT BDCOM #2 (1U)
             container.appendChild(createOltRackUnit(2, "OLT 2 (BDCOM GP3600-16B)", "VLAN 301 - 316", "#3b82f6"));
-
-            // 4. OLT BDCOM #3 (1U)
             container.appendChild(createOltRackUnit(3, "OLT 3 (BDCOM GP3600-16B)", "VLAN 401 - 416", "#a855f7"));
-
-            // 5. Cable Organizer Divider (1U)
             container.appendChild(createRackUnitHeader('5U', '1U Optical Cable Organizer & Guide', 'Оптический кроссовый организатор'));
 
-            // 6. Cross Panel 16P (1U)
             container.appendChild(createCrossRackUnit(16));
-
-            // 7. Cross Panel 24P (1U)
             container.appendChild(createCrossRackUnit(24));
-
-            // 8. Cross Panel 48P (2U)
             container.appendChild(createCrossRackUnit(48));
-
-            // 9. Cross Panel 96P (3U High Density)
             container.appendChild(createCrossRackUnit(96));
         }
 
@@ -625,31 +608,28 @@
             for (let p = 1; p <= 16; p++) {
                 const expectedVlan = (oltId * 100) + p + (oltId === 1 ? 100 : 0);
                 
-                // Check connected cross ports
                 const crossConnections = [];
                 patchPanels.forEach(pSize => {
                     const pMap = panelPortMaps[pSize];
                     Object.keys(pMap).forEach(cPort => {
                         const entry = pMap[cPort];
                         if (entry.oltId === oltId && entry.oltPort === p) {
-                            crossConnections.push(`${pSize}P (#${cPort})`);
+                            const loc = entry.location ? ` [${entry.location}]` : '';
+                            crossConnections.push(`${pSize}P (#${cPort}${loc})`);
                         }
                     });
                 });
 
-                const targetsStr = crossConnections.length > 0 ? crossConnections.join(', ') : 'Свободен';
-
                 portsGrid += `
                     <div id="olt-port-card-${oltId}-${p}" onclick="selectOltPort(${oltId}, ${p})"
                         class="olt-port-node sfp-slot p-1 rounded hover:border-sky-400 cursor-pointer transition-all flex flex-col justify-between items-center group relative min-w-[42px]"
-                        data-search="olt ${oltId} port ${p} vlan ${expectedVlan}">
+                        data-search="olt ${oltId} port ${p} vlan ${expectedVlan} ${crossConnections.join(' ')}">
                         
                         <div class="w-full flex items-center justify-between text-[9px] font-mono text-slate-400">
                             <span class="font-bold text-white">#${p}</span>
                             <span class="w-1.5 h-1.5 rounded-full led-green"></span>
                         </div>
 
-                        <!-- Optical SFP Transceiver Body -->
                         <div class="w-7 h-3.5 my-1 bg-slate-800 border border-slate-600 rounded-sm flex items-center justify-center shadow-inner">
                             <div class="w-2 h-2 rounded-full" style="background: ${themeColor}"></div>
                         </div>
@@ -662,10 +642,7 @@
             unit.innerHTML = `
                 ${createRackEarHTML()}
 
-                <!-- BDCOM Chassis Front Panel UI -->
                 <div class="flex-grow bg-slate-950/90 rounded-lg p-2.5 border border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-3">
-                    
-                    <!-- Left Brand & Status LEDs -->
                     <div class="flex items-center gap-3">
                         <div class="w-2.5 h-8 rounded-full" style="background: ${themeColor}; box-shadow: 0 0 10px ${themeColor}"></div>
                         <div>
@@ -676,7 +653,6 @@
                             <div class="text-[10px] text-slate-400 font-mono">${vlanRange}</div>
                         </div>
 
-                        <!-- Device LED status array -->
                         <div class="hidden sm:flex items-center gap-2 px-2 py-1 bg-slate-900 rounded border border-slate-800 text-[9px] font-mono">
                             <div class="text-center"><div class="w-2 h-2 rounded-full led-green mx-auto"></div>PWR</div>
                             <div class="text-center"><div class="w-2 h-2 rounded-full led-blue mx-auto animate-pulse"></div>RUN</div>
@@ -684,12 +660,10 @@
                         </div>
                     </div>
 
-                    <!-- Middle 16 SFP PON Slots Grid -->
                     <div class="grid grid-cols-8 sm:grid-cols-16 gap-1 w-full md:w-auto">
                         ${portsGrid}
                     </div>
 
-                    <!-- Right Management / Console / Uplink Ports -->
                     <div class="hidden lg:flex items-center gap-2 border-l border-slate-800 pl-3">
                         <div class="text-center font-mono text-[9px] text-slate-400">
                             <div class="w-6 h-4 bg-slate-900 border border-slate-700 rounded mx-auto mb-0.5"></div>
@@ -706,7 +680,6 @@
                             10G GE
                         </div>
                     </div>
-
                 </div>
 
                 ${createRackEarHTML()}
@@ -721,7 +694,6 @@
 
             const portMap = panelPortMaps[size] || {};
             const occupiedCount = Object.keys(portMap).length;
-            const freeCount = size - occupiedCount;
 
             let gridColsClass = 'grid-cols-8 sm:grid-cols-16';
             if (size === 24) gridColsClass = 'grid-cols-6 sm:grid-cols-12 lg:grid-cols-24';
@@ -736,33 +708,33 @@
                 if (data) {
                     const isCustom = data.isCustom;
                     const vlanText = isCustom ? data.label : `VLAN ${data.vlan}`;
-                    const portText = isCustom ? `СПЕЦ` : `OLT P${data.oltPort}`;
+                    const locationText = data.location || '';
                     const ledClass = isCustom ? 'led-amber' : 'led-green';
                     const couplerClass = isCustom ? 'border-amber-500/60 bg-amber-950/40' : 'sc-coupler-green';
 
                     portsGrid += `
                         <div id="port-card-${size}-${i}" onclick="selectCrossPort(${size}, ${i})"
-                            class="port-socket active ${couplerClass} p-1 rounded cursor-pointer transition-all flex flex-col justify-between items-center text-center min-h-[52px]"
-                            data-search="cross ${i} ${vlanText} ${portText} panel ${size}">
+                            class="port-socket active ${couplerClass} p-1 rounded cursor-pointer transition-all flex flex-col justify-between items-center text-center min-h-[56px]"
+                            data-search="cross ${i} ${vlanText} ${locationText} panel ${size}">
                             
                             <div class="w-full flex justify-between items-center text-[8px] font-mono text-slate-200">
                                 <span class="font-bold">#${i}</span>
                                 <span class="w-1.5 h-1.5 rounded-full ${ledClass}"></span>
                             </div>
 
-                            <div class="my-0.5 font-mono text-[9px] font-bold text-white truncate w-full">
-                                ${vlanText}
+                            <div class="my-0.5 font-mono text-[9px] font-bold text-white truncate w-full" title="${locationText}">
+                                ${locationText || vlanText}
                             </div>
 
-                            <div class="text-[8px] font-mono text-slate-300 font-medium">
-                                ${portText}
+                            <div class="text-[8px] font-mono text-emerald-300 font-medium truncate max-w-full">
+                                ${isCustom ? 'СПЕЦ' : vlanText}
                             </div>
                         </div>
                     `;
                 } else {
                     portsGrid += `
                         <div id="port-card-${size}-${i}" onclick="selectCrossPort(${size}, ${i})"
-                            class="port-socket sc-coupler-empty opacity-40 hover:opacity-100 p-1 rounded cursor-pointer transition-all flex flex-col justify-between items-center text-center min-h-[52px]"
+                            class="port-socket sc-coupler-empty opacity-40 hover:opacity-100 p-1 rounded cursor-pointer transition-all flex flex-col justify-between items-center text-center min-h-[56px]"
                             data-search="cross ${i} свободно empty panel ${size}">
                             
                             <div class="w-full flex justify-between items-center text-[8px] font-mono text-slate-600">
@@ -770,7 +742,7 @@
                                 <span class="w-1 h-1 rounded-full bg-slate-700"></span>
                             </div>
 
-                            <div class="text-[9px] text-slate-600 font-mono">
+                            <div class="text-[9px] text-slate-600 font-mono my-1">
                                 •
                             </div>
 
@@ -789,7 +761,6 @@
             unit.innerHTML = `
                 ${createRackEarHTML()}
 
-                <!-- Cross Panel Front Faceplate -->
                 <div class="flex-grow bg-slate-950/90 rounded-lg p-2.5 border border-slate-800/80 space-y-2">
                     <div class="flex items-center justify-between pb-1 border-b border-slate-800 text-xs font-mono">
                         <div class="flex items-center gap-2">
@@ -818,7 +789,6 @@
             leftRack.innerHTML = '';
             rightRack.innerHTML = '';
 
-            // 1. Build Left Rack (Cross-Panels Active Sockets)
             patchPanels.forEach(pSize => {
                 const pMap = panelPortMaps[pSize];
                 const activePorts = Object.keys(pMap).sort((a,b) => parseInt(a) - parseInt(b));
@@ -831,15 +801,15 @@
                         <span class="text-xs font-bold text-sky-400 font-mono">КРОСС-ПАНЕЛЬ ${pSize}P</span>
                         <span class="text-[10px] text-slate-400 font-mono">${activePorts.length} активных волокон</span>
                     </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                 `;
 
                 activePorts.forEach(cPort => {
                     const entry = pMap[cPort];
                     const isCustom = entry.isCustom;
                     const vlanText = isCustom ? entry.label : `VLAN ${entry.vlan}`;
+                    const locationText = entry.location || 'Нет описания';
                     const borderCls = isCustom ? 'border-amber-500/40' : 'border-emerald-500/40';
-                    const textCls = isCustom ? 'text-amber-400' : 'text-emerald-400';
 
                     header += `
                         <div id="cord-src-${pSize}-${cPort}"
@@ -847,11 +817,13 @@
                             onmouseenter="highlightCord('cross', ${pSize}, ${cPort})"
                             onmouseleave="resetCordHighlight()"
                             class="cord-socket-node bg-slate-950 border ${borderCls} hover:border-sky-400 rounded-lg p-2 cursor-pointer transition-all flex items-center justify-between text-xs font-mono">
-                            <div>
-                                <div class="font-bold text-white text-[11px]">#${cPort}</div>
-                                <div class="text-[10px] ${textCls}">${vlanText}</div>
+                            <div class="truncate mr-1">
+                                <div class="font-bold text-white text-[11px] flex items-center gap-1">
+                                    #${cPort} <span class="text-[9px] text-sky-400">(${vlanText})</span>
+                                </div>
+                                <div class="text-[10px] text-amber-300 font-semibold truncate">${locationText}</div>
                             </div>
-                            <div class="w-2.5 h-2.5 rounded-full ${isCustom ? 'led-amber' : 'led-green'} cord-pin-left"></div>
+                            <div class="w-2.5 h-2.5 rounded-full ${isCustom ? 'led-amber' : 'led-green'} cord-pin-left flex-shrink-0"></div>
                         </div>
                     `;
                 });
@@ -861,7 +833,6 @@
                 leftRack.appendChild(panelDiv);
             });
 
-            // 2. Build Right Rack (3 OLTs with 16 Ports)
             const olts = [
                 { id: 1, name: "OLT 1 (VLAN 2xx)", color: "#10b981", border: "border-emerald-500/40" },
                 { id: 2, name: "OLT 2 (VLAN 3xx)", color: "#3b82f6", border: "border-blue-500/40" },
@@ -1036,13 +1007,11 @@
 
             const data = panelPortMaps[panelSize]?.[portNum];
             
-            // Highlight source Cross Port card
             const targetEl = document.getElementById(`port-card-${panelSize}-${portNum}`);
             if (targetEl) {
                 targetEl.classList.add('ring-2', 'ring-sky-400', 'scale-105', 'bg-sky-950/80');
             }
 
-            // Highlight target OLT Port card
             if (data && !data.isCustom && data.oltId && data.oltPort) {
                 const oltEl = document.getElementById(`olt-port-card-${data.oltId}-${data.oltPort}`);
                 if (oltEl) {
@@ -1050,7 +1019,6 @@
                 }
             }
 
-            // Highlight Cords View elements
             const cordSrc = document.getElementById(`cord-src-${panelSize}-${portNum}`);
             if (cordSrc) {
                 cordSrc.classList.add('ring-2', 'ring-sky-400');
@@ -1068,20 +1036,21 @@
                     openInspector(
                         `Панель ${panelSize}P — Кросс #${portNum} (${data.label})`,
                         [
-                            { label: 'Сервис', val: data.label },
-                            { label: 'Статус', val: 'СПЕЦ. ЛИНК' }
+                            { label: 'Район / Сервис', val: data.location || data.label },
+                            { label: 'Тип', val: 'СПЕЦ. ЛИНК' },
+                            { label: 'Статус', val: 'АКТИВЕН' }
                         ]
                     );
                 } else {
                     openInspector(
                         `Кросс #${portNum} (${panelSize}P) ➔ OLT ${data.oltId} (Port ${data.oltPort})`,
                         [
+                            { label: 'Թաղամաս / Район', val: data.location || 'Не указан' },
                             { label: 'Панель', val: `${panelSize}P` },
                             { label: 'Кросс-Порт', val: `#${portNum}` },
                             { label: 'OLT', val: `BDCOM OLT ${data.oltId}` },
                             { label: 'OLT Port', val: `Port ${data.oltPort}` },
-                            { label: 'VLAN', val: `VLAN ${data.vlan}` },
-                            { label: 'Статус', val: 'АКТИВЕН' }
+                            { label: 'VLAN', val: `VLAN ${data.vlan}` }
                         ]
                     );
                 }
@@ -1122,7 +1091,7 @@
                 Object.keys(pMap).forEach(cPort => {
                     const entry = pMap[cPort];
                     if (entry.oltId === oltId && entry.oltPort === portNum) {
-                        matches.push({ panelSize: pSize, crossPort: cPort });
+                        matches.push({ panelSize: pSize, crossPort: cPort, location: entry.location });
                         
                         const crossEl = document.getElementById(`port-card-${pSize}-${cPort}`);
                         if (crossEl) {
@@ -1144,16 +1113,15 @@
 
             highlightCord('olt', oltId, portNum, true);
 
-            const matchLabels = matches.map(m => `${m.panelSize}P (#${m.crossPort})`);
+            const matchLabels = matches.map(m => `${m.panelSize}P (#${m.crossPort} - ${m.location || 'Без района'})`);
 
             openInspector(
-                `BDCOM OLT ${oltId} — PON Port ${portNum} ➔ Кросс: ${matchLabels.length > 0 ? matchLabels.join(', ') : 'Нет'}`,
+                `BDCOM OLT ${oltId} — PON Port ${portNum} (VLAN ${expectedVlan})`,
                 [
                     { label: 'Устройство', val: `OLT ${oltId}` },
                     { label: 'PON Port', val: `Port ${portNum}` },
                     { label: 'VLAN', val: `VLAN ${expectedVlan}` },
-                    { label: 'Кросс-панели', val: matchLabels.length > 0 ? matchLabels.join(', ') : 'Не скроссирован' },
-                    { label: 'Статус', val: 'АКТИВЕН' }
+                    { label: 'Скроссировано', val: matchLabels.length > 0 ? matchLabels.join(' | ') : 'Нет' }
                 ]
             );
         }
@@ -1194,6 +1162,7 @@
                     tableRows.push({
                         panelSize: pSize,
                         crossPort: parseInt(cPort),
+                        location: entry.location || '-',
                         isCustom: !!entry.isCustom,
                         vlanOrLabel: entry.isCustom ? entry.label : `VLAN ${entry.vlan}`,
                         oltInfo: entry.isCustom ? 'Спец. Сервис / Uplink' : `BDCOM OLT ${entry.oltId} (Port ${entry.oltPort})`
@@ -1206,12 +1175,13 @@
             tableRows.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-800/60 cursor-pointer transition-colors search-row';
-                tr.setAttribute('data-search', `panel ${item.panelSize} cross ${item.crossPort} ${item.vlanOrLabel} ${item.oltInfo}`);
+                tr.setAttribute('data-search', `panel ${item.panelSize} cross ${item.crossPort} ${item.location} ${item.vlanOrLabel} ${item.oltInfo}`);
                 tr.onclick = () => selectCrossPort(item.panelSize, item.crossPort);
 
                 tr.innerHTML = `
-                    <td class="p-3.5 text-slate-300 font-bold">Кросс-панель ${item.panelSize}P</td>
-                    <td class="p-3.5 font-bold text-sky-400">Cross #${item.crossPort}</td>
+                    <td class="p-3.5 text-slate-300 font-bold">Кросс ${item.panelSize}P</td>
+                    <td class="p-3.5 font-bold text-sky-400">#${item.crossPort}</td>
+                    <td class="p-3.5 text-amber-300 font-semibold">${item.location}</td>
                     <td class="p-3.5">
                         <span class="px-2 py-0.5 rounded ${item.isCustom ? 'bg-amber-950/80 text-amber-400 border border-amber-800/60' : 'bg-slate-800 border border-slate-700 text-emerald-400'} font-bold">
                             ${item.vlanOrLabel}
